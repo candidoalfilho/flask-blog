@@ -11,7 +11,7 @@ from flask_gravatar import Gravatar
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+app.config['SECRET_KEY'] = os.urandom(32)
 ckeditor = CKEditor(app)
 Bootstrap(app)
 gravatar = Gravatar(app, size=100, rating='g', default='retro', force_default=False, force_lower=False, use_ssl=False, base_url=None)
@@ -76,8 +76,17 @@ db.create_all()
 
 def admin_only(function):
     def authentication(post_id):
-        if current_user and current_user.id==1:
+        if current_user and current_user.id == 1:
             return function(post_id)
+        return abort(403)
+    authentication.__name__ = function.__name__
+    return authentication
+
+
+def admin_only_page(function):
+    def authentication():
+        if current_user and current_user.id == 1:
+            return function()
         return abort(403)
     authentication.__name__ = function.__name__
     return authentication
@@ -108,7 +117,7 @@ def register():
             db.session.commit()
             login_user(new_user)
         else:
-            error = "You've already signed up. Log in instead!"
+            error = "Você já se registrou. Faça o login."
             return render_template("register.html",form=form, error=error)
         return redirect(url_for('get_all_posts'))
 
@@ -127,15 +136,14 @@ def login():
             has_matched = check_password_hash(query_user.password, typed_password)
             if has_matched:
                 login_user(query_user)
-                # flash('You were successfully logged in')
+                flash('Logado com sucesso!')
                 return redirect(url_for("get_all_posts"))
             else:
-                error = 'Invalid password.'
+                error = 'Senha inválida.'
                 return render_template("login.html",form=form,error=error)
         except Exception:
-            error = 'Invalid email.'
+            error = 'Email inválido.'
             return render_template("login.html",form=form, error=error)
-
 
     return render_template("login.html",form=form)
 
@@ -153,7 +161,7 @@ def show_post(post_id):
     comments = db.session.query(Comment).filter_by(post_id=post_id)
     if form.validate_on_submit():
         if not current_user.is_authenticated:
-            flash("You need to login or register to comment.")
+            flash("Você precisa fazer login ou se registrar para comentar.")
             return redirect(url_for("login"))
 
         new_comment = Comment(
@@ -196,10 +204,7 @@ def add_new_post():
     return render_template("make-post.html", form=form)
 
 
-
-
-
-@app.route("/edit-post/<int:post_id>")
+@app.route("/edit-post/<int:post_id>",methods=["GET","POST"])
 @admin_only
 def edit_post(post_id):
     post = BlogPost.query.get(post_id)
@@ -207,7 +212,6 @@ def edit_post(post_id):
         title=post.title,
         subtitle=post.subtitle,
         img_url=post.img_url,
-        author=post.author,
         body=post.body
     )
     if edit_form.validate_on_submit():
@@ -228,6 +232,12 @@ def delete_post(post_id):
     db.session.delete(post_to_delete)
     db.session.commit()
     return redirect(url_for('get_all_posts'))
+
+
+@app.route("/admin",methods=["GET"])
+@admin_only_page
+def admin_page():
+    return render_template(url_for('admin'))
 
 
 if __name__ == "__main__":

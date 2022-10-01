@@ -1,0 +1,18 @@
+.monthly-needs{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+    background-image: linear-gradient(to right, #00b4db, #0083b0);
+}
+
+.monthly-needs h1{
+    font-size: 25px;
+    font-family: 'Arial';
+}
+
+.monthly-needs li{
+    font-family: 'Arial';
+}
+
+

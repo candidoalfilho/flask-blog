@@ -1,14 +1,15 @@
 {% include "header.html" %}
+<link href="{{ url_for('static', filename='css/clean-blog.min.css')}}" rel="stylesheet">
 
   <!-- Page Header -->
-  <header class="masthead" style="background-image: url('https://images.unsplash.com/photo-1470092306007-055b6797ca72?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80')">
+  <header class="masthead" style="background-image: url('{{ url_for('static', filename='img/backgroundindex.png')}}')">
     <div class="overlay"></div>
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="site-heading">
-            <h1>Candido's Blog</h1>
-            <span class="subheading">A collection of random musings.</span>
+            <h1>Casa da Criança com Câncer</h1>
+            <span class="subheading">Desde 1997 acolhendo crianças e adolescentes com muito amor!</span>
           </div>
         </div>
       </div>
@@ -18,7 +19,30 @@
   <!-- Main Content -->
   <div class="container">
     <div class="row">
-      <div class="col-lg-8 col-md-10 mx-auto">
+      <div class="col-lg-10 col-md-12 mx-auto">
+        <h1>A casa</h1>
+        <p>Somos uma ONG destinada ao apoio de crianças que possuem Câncer no Estado da Paraíba. </p>
+      </div>
+      <div class="col-lg-10 col-md-12 mx-auto">
+        <h1>Como contribuir</h1>
+        <p>Existem diversas formas que você pode ajudar a instituição</p>
+
+        <div class="monthly-needs col-lg-8 col-md-12">
+          <h1>Necessidades do mês</h1>
+          <ul>
+            <li>Feijão</li>
+            <li>Batata</li>
+            <li>Feijão</li>
+            <li>Batata</li>
+            <li>Feijão</li>
+            <li>Batata</li>
+            <li>Feijão</li>
+            <li>Batata</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-10 col-md-12 mx-auto">
+        <h1>Notícias</h1>
         {% for post in all_posts %}
         <div class="post-preview">
           <a href="{{ url_for('show_post', post_id=post.id) }}">
@@ -29,9 +53,9 @@
               {{post.subtitle}}
             </h3>
           </a>
-          <p class="post-meta">Posted by
+          <p class="post-meta">Publicado por
             <a href="#">{{post.author.name}}</a>
-            on {{post.date}}
+            em {{post.date}}
           {% if current_user.id == 1: %}
             <a href="{{url_for('delete_post', post_id=post.id) }}">✘</a>
           {% endif %}
@@ -40,16 +64,17 @@
         <hr>
         {% endfor %}
 
-
         <!-- New Post -->
         {% if current_user.id == 1: %}
         <div class="clearfix">
-          <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Create New Post</a>
+          <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Publicar notícia</a>
         </div>
         {% endif %}
       </div>
     </div>
   </div>
   <hr>
+
+<link href="{{ url_for('static', filename='css/index.css')}}" rel="stylesheet">
 
 {% include "footer.html" %}
